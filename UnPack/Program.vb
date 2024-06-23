@@ -85,14 +85,26 @@ Module Program
     Class FileDataVer1
         Public checksum As Int64 = br.ReadInt64
         Public offset As Int32 = br.ReadInt32
-        Public size As Int32 = br.ReadInt32
         Public sizeUncompressed As Int32 = br.ReadInt32
+        Public size as Int32 = br.ReadInt32
         Public types As Int32 = br.ReadInt32 ' No : 0 , 1 : Gzip
     End Class
 
     Class FileDataVer2
         Public checksum As Int64 = br.ReadInt64
         Public offset As Int32 = br.ReadInt32
+        Public sizeUncompressed As Int32 = br.ReadInt32
+        Public size as Int32 = br.ReadInt32
+        Public types As Byte = br.ReadByte ' No : 0 , 1 : Gzip
+        Public unknow0 as Byte = br.ReadByte
+        Public unknow1 as Byte = br.ReadByte
+        Public unknow2 as Byte = br.ReadByte
+        Public _sha256 As Int64 = br.ReadInt64
+    End Class
+
+    Class FileDataVer3
+        Public checksum as Int64 = br.ReadInt64
+        Public offset as Int32 = br.ReadInt32
         Public sizeUncompressed As Int32 = br.ReadInt32
         Public size as Int32 = br.ReadInt32
         Public types As Byte = br.ReadByte ' No : 0 , 1 : Gzip
