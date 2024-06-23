@@ -61,7 +61,13 @@ Module Program
 
                 Dim offset As Long = br.BaseStream.Position
 
+                If MajorVersion = 1 Then
 
+
+                ElseIf MajorVersion = 2 Then
+
+
+                End If
 
             End While
 

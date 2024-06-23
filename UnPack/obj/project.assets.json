@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Source VBNet_C#\\GitHub\\RiotGames-UnPack\\UnPack\\UnPack\\UnPack.vbproj",
+      "projectUniqueName": "D:\\Source VBNet_C#\\GitHub\\RiotGames-UnPack\\UnPack\\UnPack.vbproj",
       "projectName": "UnPack",
-      "projectPath": "D:\\Source VBNet_C#\\GitHub\\RiotGames-UnPack\\UnPack\\UnPack\\UnPack.vbproj",
+      "projectPath": "D:\\Source VBNet_C#\\GitHub\\RiotGames-UnPack\\UnPack\\UnPack.vbproj",
       "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-      "outputPath": "D:\\Source VBNet_C#\\GitHub\\RiotGames-UnPack\\UnPack\\UnPack\\obj\\",
+      "outputPath": "D:\\Source VBNet_C#\\GitHub\\RiotGames-UnPack\\UnPack\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",
