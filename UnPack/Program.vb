@@ -77,21 +77,55 @@ Module Program
                       br.BaseStream.Position = fd1.offset
                       if fd1.types = 0 Then
                          buffer = br.ReadBytes(fd1.size)
-                         Using bw as New BinaryWriter(File.Create("des + name + ext")
+                         Using bw as New BinaryWriter(File.Create(des + name + ext)
                              bw.Write(buffer)
                          End Using
                        Elseif fd1.types = 1 Then
                          ms = New MemoryStream()
                          buffer = br.ReadBytes(sizeUncompressed)
-                         Dim fs as FileStream = File.Create("des + name + ext")
+                         Dim fs as FileStream = File.Create(des + name + ext)
                          Using dfs as New DeflateStream(New MemoryStream(buffer), CompressionMode.Decompress)
                             dfs.copyto(fs)
                          End Using
                         End If
                    Next
                 ElseIf MajorVersion = 2 Then
-
-
+                 For Each fd2 as FileDataVer2 In subfiles2
+                      Console.WriteLine("File Offset : {0} - File sizeUncompressed : {1} - File Size : {2} - File Name : {3}", fd2.offset, fd2.sizeUncompressed, fd2.size, name)
+                      name  = hexname(fd2.Checksum)
+                      br.BaseStream.Position = fd2.offset
+                      if fd2.types = 0 Then
+                         buffer = br.ReadBytes(fd2.size)
+                         Using bw as New BinaryWriter(File.Create(des + name + ext)
+                             bw.Write(buffer)
+                         End Using
+                       Elseif fd2.types = 1 Then
+                         ms = New MemoryStream()
+                         buffer = br.ReadBytes(sizeUncompressed)
+                         Dim fs as FileStream = File.Create(des + name + ext)
+                         Using dfs as New DeflateStream(New MemoryStream(buffer), CompressionMode.Decompress)
+                            dfs.copyto(fs)
+                         End Using
+                        End If
+                   Next
+                Elseif MajorVersion = 3 Then
+                    Console.WriteLine("File Offset : {0} - File sizeUncompressed : {1} - File Size : {2} - File Name : {3}", fd3.offset, fd3.sizeUncompressed, fd3.size, name)
+                      name  = hexname(fd3.Checksum)
+                      br.BaseStream.Position = fd3.offset
+                      if fd3.types = 0 Then
+                         buffer = br.ReadBytes(fd3.size)
+                         Using bw as New BinaryWriter(File.Create(des + name + ext)
+                             bw.Write(buffer)
+                         End Using
+                       Elseif fd3.types = 1 Then
+                         ms = New MemoryStream()
+                         buffer = br.ReadBytes(sizeUncompressed)
+                         Dim fs as FileStream = File.Create(des + name + ext)
+                         Using dfs as New DeflateStream(New MemoryStream(buffer), CompressionMode.Decompress)
+                            dfs.copyto(fs)
+                         End Using
+                        End If
+                   Next
                 End If
 
             End While
