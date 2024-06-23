@@ -34,12 +34,17 @@ Module Program
             Dim subfiles2 As List(Of FileDataVer2) = Nothing
 
             If MajorVersion = 1 Then
-                br.ReadInt32()
+                Dim entryHeaderOffset as Int16 = br.ReadInt16
+                Dim entryHeaderCellSize as Int16 = br.ReadInt16
                 count = br.ReadInt32
                 subfiles1 = New List(Of FileDataVer1)()
             ElseIf MajorVersion = 2 Then
-                br.ReadBytes(92)
-                br.ReadInt32()
+                Dim ECDSALength as Byte = br.ReadByte
+                Dim ECDSA as Byte() = br.ReadBytes(ECDSALength)
+                Dim ECDSAPadding as Byte() = br.ReadBytes(83 - ECDSALength)
+                Dim filesChecksum as Int64 = br.ReadInt64
+                Dim entryHeaderOffset as Int16 = br.ReadInt16
+                Dim entryHeaderCellSize as Int16 = br.ReadInt16
                 count = br.ReadInt32
                 subfiles2 = New List(Of FileDataVer2)()
             ElseIf MajorVersion = 3 Then
