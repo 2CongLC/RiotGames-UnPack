@@ -69,12 +69,26 @@ Module Program
             Next
 
             While br.BaseStream.Position < br.BaseStream.Length
-
-                Dim offset As Long = br.BaseStream.Position
-
+                Dim name as String
                 If MajorVersion = 1 Then
-
-
+                   For Each fd1 as FileDataVer1 In subfiles1
+                      Console.WriteLine("File Offset : {0} - File sizeUncompressed : {1} - File Size : {2} - File Name : {3}", fd1.offset, fd1.sizeUncompressed, fd1.size, name)
+                      name  = hexname(fd1.Checksum)
+                      br.BaseStream.Position = fd1.offset
+                      if fd1.types = 0 Then
+                         buffer = br.ReadBytes(fd1.size)
+                         Using bw as New BinaryWriter(File.Create("des + name + ext")
+                             bw.Write(buffer)
+                         End Using
+                       Elseif fd1.types = 1 Then
+                         ms = New MemoryStream()
+                         buffer = br.ReadBytes(sizeUncompressed)
+                         Dim fs as FileStream = File.Create("des + name + ext")
+                         Using dfs as New DeflateStream(New MemoryStream(buffer), CompressionMode.Decompress)
+                            dfs.copyto(fs)
+                         End Using
+                        End If
+                   Next
                 ElseIf MajorVersion = 2 Then
 
 
@@ -87,8 +101,19 @@ Module Program
         Console.ReadLine()
     End Sub
 
+    Function hexname(hash As Byte()) As String
+        Dim sb As New StringBuilder()
+        sb.Length = 0
+        For Each b As Byte In hash
+          sb.Append(b.ToString("X2"))
+        Next
+        Return sb.ToString()
+    End Function
+
+
+
     Class FileDataVer1
-        Public checksum As Int64 = br.ReadInt64
+        Public checksum As Byte() = br.ReadBytes(8) ' Int64 = br.ReadInt64
         Public offset As Int32 = br.ReadInt32
         Public sizeUncompressed As Int32 = br.ReadInt32
         Public size as Int32 = br.ReadInt32
@@ -96,7 +121,7 @@ Module Program
     End Class
 
     Class FileDataVer2
-        Public checksum As Int64 = br.ReadInt64
+        Public checksum As Byte() = br.ReadBytes(8) 'Int64 = br.ReadInt64
         Public offset As Int32 = br.ReadInt32
         Public sizeUncompressed As Int32 = br.ReadInt32
         Public size as Int32 = br.ReadInt32
@@ -108,7 +133,7 @@ Module Program
     End Class
 
     Class FileDataVer3
-        Public checksum as Int64 = br.ReadInt64
+        Public checksum as Byte() = br.ReadBytes(8) 'Int64 = br.ReadInt64
         Public offset as Int32 = br.ReadInt32
         Public sizeUncompressed As Int32 = br.ReadInt32
         Public size as Int32 = br.ReadInt32
