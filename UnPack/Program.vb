@@ -109,6 +109,7 @@ Module Program
                         End If
                    Next
                 Elseif MajorVersion = 3 Then
+                  For Each fd3 as FileData3 In subfiles3
                     Console.WriteLine("File Offset : {0} - File sizeUncompressed : {1} - File Size : {2} - File Name : {3}", fd3.offset, fd3.sizeUncompressed, fd3.size, name)
                       name  = hexname(fd3.Checksum)
                       br.BaseStream.Position = fd3.offset
@@ -143,8 +144,6 @@ Module Program
         Next
         Return sb.ToString()
     End Function
-
-
 
     Class FileDataVer1
         Public checksum As Byte() = br.ReadBytes(8) ' Int64 = br.ReadInt64
