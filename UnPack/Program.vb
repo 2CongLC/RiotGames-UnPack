@@ -68,6 +68,9 @@ Module Program
                 End If
             Next
 
+            des = Path.GetDirectoryName(source & "\" & Path.GetFileNameWithoutExtension(source) & "\")
+            Directory.CreateDirectory(des)
+
             While br.BaseStream.Position < br.BaseStream.Length
                 Dim name as String
                 If MajorVersion = 1 Then
