@@ -33,6 +33,7 @@ Module Program
 
             Dim subfiles1 As List(Of FileDataVer1) = Nothing
             Dim subfiles2 As List(Of FileDataVer2) = Nothing
+            Dim subfiles3 As List(Of FileDataVer3) = Nothing
 
             If MajorVersion = 1 Then
                 Dim entryHeaderOffset as Int16 = br.ReadInt16
@@ -49,17 +50,21 @@ Module Program
                 count = br.ReadInt32
                 subfiles2 = New List(Of FileDataVer2)()
             ElseIf MajorVersion = 3 Then
-
+                Dim ECDSA as Byte() = br.ReadBytes(256)
+                Dim filesChecksum as Int64 = br.ReadInt64
+                count = br.ReadInt32
+                subfiles3 = New List(Of FileDataVer3)()
             End If
 
             ' Console.WriteLine("Sign : {0} - MajorVersion : {1} - MinorVersion : {2} - Count : {3}", sign, MajorVersion, MinorVersion, count)
-
 
             For i As Int32 = 0 To count - 1
                 If MajorVersion = 1 Then
                     subfiles1.Add(New FileDataVer1)
                 ElseIf MajorVersion = 2 Then
                     subfiles2.Add(New FileDataVer2)
+                ElseIf MajorVersion = 3 Then
+                    subfiles3.Add(New FileDataVer3)
                 End If
             Next
 
