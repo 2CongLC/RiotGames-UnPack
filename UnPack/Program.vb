@@ -56,7 +56,7 @@ Module Program
                 subfiles3 = New List(Of FileDataVer3)()
             End If
 
-            ' Console.WriteLine("Sign : {0} - MajorVersion : {1} - MinorVersion : {2} - Count : {3}", sign, MajorVersion, MinorVersion, count)
+            Console.WriteLine("Sign : {0} - MajorVersion : {1} - MinorVersion : {2} - Count : {3}", sign, MajorVersion, MinorVersion, count)
 
             For i As Int32 = 0 To count - 1
                 If MajorVersion = 1 Then
@@ -76,10 +76,12 @@ Module Program
 
                 If MajorVersion = 1 Then
                     For Each fd1 As FileDataVer1 In subfiles1
+
                         name = hexname(fd1.checksum)
                         Console.WriteLine("File Offset : {0} - File sizeUncompressed : {1} - File Size : {2} - File Name : {3}", fd1.offset, fd1.sizeUncompressed, fd1.size, name)
 
                         br.BaseStream.Position = fd1.offset
+
                         If fd1.types = 0 Then
                             buffer = br.ReadBytes(fd1.size)
                             Using bw As New BinaryWriter(File.Create(des + "\" + name))
@@ -97,10 +99,12 @@ Module Program
                     Next
                 ElseIf MajorVersion = 2 Then
                     For Each fd2 As FileDataVer2 In subfiles2
+
                         name = hexname(fd2.checksum)
                         Console.WriteLine("File Offset : {0} - File sizeUncompressed : {1} - File Size : {2} - File Name : {3}", fd2.offset, fd2.sizeUncompressed, fd2.size, name)
 
                         br.BaseStream.Position = fd2.offset
+
                         If fd2.types = 0 Then
                             buffer = br.ReadBytes(fd2.size)
                             Using bw As New BinaryWriter(File.Create(des + "\" + name))
@@ -118,19 +122,24 @@ Module Program
                     Next
                 ElseIf MajorVersion = 3 Then
                     For Each fd3 As FileDataVer3 In subfiles3
+
                         name = hexname(fd3.checksum)
                         Console.WriteLine("File Offset : {0} - File sizeUncompressed : {1} - File Size : {2} - File Type : {3} - File Name : {4}", fd3.offset, fd3.sizeUncompressed, fd3.size, fd3.types, name)
+
                         br.BaseStream.Position = fd3.offset
+
                         If fd3.types = 0 Then
                             buffer = br.ReadBytes(fd3.size)
                             Using bw As New BinaryWriter(File.Create(des + "\" + name))
                                 bw.Write(buffer)
                             End Using
                         ElseIf fd3.types = 3 Then
-                            ms = New MemoryStream()
+
                             buffer = br.ReadBytes(fd3.sizeUncompressed)
+                            ms = New MemoryStream(buffer)
+                            ms.Position = 0
                             Dim fs As FileStream = File.Create(des + "\" + name)
-                            Using zs As New ZstdNet.DecompressionStream(New MemoryStream(buffer))
+                            Using zs As New ZstdNet.DecompressionStream(ms)
                                 zs.CopyTo(fs)
                             End Using
                             fs.Close()
