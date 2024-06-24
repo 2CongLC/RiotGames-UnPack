@@ -6,4 +6,10 @@
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="ZstdNet">
+      <HintPath>..\Lib\net45\ZstdNet.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

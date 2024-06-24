@@ -2,7 +2,7 @@ Imports System
 Imports System.Text
 Imports System.IO
 Imports System.IO.Compression
-
+Imports ZstdNet
 
 Module Program
 
@@ -68,68 +68,73 @@ Module Program
                 End If
             Next
 
-            des = Path.GetDirectoryName(source & "\" & Path.GetFileNameWithoutExtension(source) & "\")
+            des = Path.GetDirectoryName(source) & "\" & Path.GetFileNameWithoutExtension(source)
             Directory.CreateDirectory(des)
 
             While br.BaseStream.Position < br.BaseStream.Length
-                Dim name as String
+                Dim name As String = Nothing
+
                 If MajorVersion = 1 Then
-                   For Each fd1 as FileDataVer1 In subfiles1
-                      Console.WriteLine("File Offset : {0} - File sizeUncompressed : {1} - File Size : {2} - File Name : {3}", fd1.offset, fd1.sizeUncompressed, fd1.size, name)
-                      name  = hexname(fd1.Checksum)
-                      br.BaseStream.Position = fd1.offset
-                      if fd1.types = 0 Then
-                         buffer = br.ReadBytes(fd1.size)
-                         Using bw as New BinaryWriter(File.Create(des + name + ext)
-                             bw.Write(buffer)
-                         End Using
-                       Elseif fd1.types = 1 Then
-                         ms = New MemoryStream()
-                         buffer = br.ReadBytes(sizeUncompressed)
-                         Dim fs as FileStream = File.Create(des + name + ext)
-                         Using dfs as New DeflateStream(New MemoryStream(buffer), CompressionMode.Decompress)
-                            dfs.copyto(fs)
-                         End Using
+                    For Each fd1 As FileDataVer1 In subfiles1
+                        name = hexname(fd1.checksum)
+                        Console.WriteLine("File Offset : {0} - File sizeUncompressed : {1} - File Size : {2} - File Name : {3}", fd1.offset, fd1.sizeUncompressed, fd1.size, name)
+
+                        br.BaseStream.Position = fd1.offset
+                        If fd1.types = 0 Then
+                            buffer = br.ReadBytes(fd1.size)
+                            Using bw As New BinaryWriter(File.Create(des + "\" + name))
+                                bw.Write(buffer)
+                            End Using
+                        ElseIf fd1.types = 1 Then
+                            ms = New MemoryStream()
+                            buffer = br.ReadBytes(fd1.sizeUncompressed)
+                            Dim fs As FileStream = File.Create(des + "\" + name)
+                            Using dfs As New GZipStream(New MemoryStream(buffer), CompressionMode.Decompress)
+                                dfs.CopyTo(fs)
+                            End Using
                         End If
-                   Next
+                    Next
                 ElseIf MajorVersion = 2 Then
-                 For Each fd2 as FileDataVer2 In subfiles2
-                      Console.WriteLine("File Offset : {0} - File sizeUncompressed : {1} - File Size : {2} - File Name : {3}", fd2.offset, fd2.sizeUncompressed, fd2.size, name)
-                      name  = hexname(fd2.Checksum)
-                      br.BaseStream.Position = fd2.offset
-                      if fd2.types = 0 Then
-                         buffer = br.ReadBytes(fd2.size)
-                         Using bw as New BinaryWriter(File.Create(des + name + ext)
-                             bw.Write(buffer)
-                         End Using
-                       Elseif fd2.types = 1 Then
-                         ms = New MemoryStream()
-                         buffer = br.ReadBytes(sizeUncompressed)
-                         Dim fs as FileStream = File.Create(des + name + ext)
-                         Using dfs as New DeflateStream(New MemoryStream(buffer), CompressionMode.Decompress)
-                            dfs.copyto(fs)
-                         End Using
+                    For Each fd2 As FileDataVer2 In subfiles2
+                        name = hexname(fd2.checksum)
+                        Console.WriteLine("File Offset : {0} - File sizeUncompressed : {1} - File Size : {2} - File Name : {3}", fd2.offset, fd2.sizeUncompressed, fd2.size, name)
+
+                        br.BaseStream.Position = fd2.offset
+                        If fd2.types = 0 Then
+                            buffer = br.ReadBytes(fd2.size)
+                            Using bw As New BinaryWriter(File.Create(des + "\" + name))
+                                bw.Write(buffer)
+                            End Using
+                        ElseIf fd2.types = 1 Then
+                            ms = New MemoryStream()
+                            buffer = br.ReadBytes(fd2.sizeUncompressed)
+                            Dim fs As FileStream = File.Create(des + "\" + name)
+                            Using dfs As New GZipStream(New MemoryStream(buffer), CompressionMode.Decompress)
+                                dfs.CopyTo(fs)
+                            End Using
                         End If
-                   Next
-                Elseif MajorVersion = 3 Then
-                  For Each fd3 as FileData3 In subfiles3
-                    Console.WriteLine("File Offset : {0} - File sizeUncompressed : {1} - File Size : {2} - File Name : {3}", fd3.offset, fd3.sizeUncompressed, fd3.size, name)
-                      name  = hexname(fd3.Checksum)
-                      br.BaseStream.Position = fd3.offset
-                      if fd3.types = 0 Then
-                         buffer = br.ReadBytes(fd3.size)
-                         Using bw as New BinaryWriter(File.Create(des + name + ext)
-                             bw.Write(buffer)
-                         End Using
-                       Elseif fd3.types = 1 Then
-                         ms = New MemoryStream()
-                         buffer = br.ReadBytes(sizeUncompressed)
-                         Dim fs as FileStream = File.Create(des + name + ext)
-                         Using dfs as New DeflateStream(New MemoryStream(buffer), CompressionMode.Decompress)
-                            dfs.copyto(fs)
-                         End Using
+                    Next
+                ElseIf MajorVersion = 3 Then
+                    For Each fd3 As FileDataVer3 In subfiles3
+                        name = hexname(fd3.checksum)
+                        Console.WriteLine("File Offset : {0} - File sizeUncompressed : {1} - File Size : {2} - File Type : {3} - File Name : {4}", fd3.offset, fd3.sizeUncompressed, fd3.size, fd3.types, name)
+                        br.BaseStream.Position = fd3.offset
+                        If fd3.types = 0 Then
+                            buffer = br.ReadBytes(fd3.size)
+                            Using bw As New BinaryWriter(File.Create(des + "\" + name))
+                                bw.Write(buffer)
+                            End Using
+                        ElseIf fd3.types = 3 Then
+                            ms = New MemoryStream()
+                            buffer = br.ReadBytes(fd3.sizeUncompressed)
+                            Dim fs As FileStream = File.Create(des + "\" + name)
+                            Using zs As New ZstdNet.DecompressionStream(New MemoryStream(buffer))
+                                zs.CopyTo(fs)
+                            End Using
                         End If
-                   Next
+
+
+                    Next
                 End If
 
             End While
@@ -151,16 +156,16 @@ Module Program
     Class FileDataVer1
         Public checksum As Byte() = br.ReadBytes(8) ' Int64 = br.ReadInt64
         Public offset As Int32 = br.ReadInt32
+        Public size As Int32 = br.ReadInt32
         Public sizeUncompressed As Int32 = br.ReadInt32
-        Public size as Int32 = br.ReadInt32
         Public types As Int32 = br.ReadInt32 ' No : 0 , 1 : Gzip
     End Class
 
     Class FileDataVer2
         Public checksum As Byte() = br.ReadBytes(8) 'Int64 = br.ReadInt64
         Public offset As Int32 = br.ReadInt32
+        Public size As Int32 = br.ReadInt32
         Public sizeUncompressed As Int32 = br.ReadInt32
-        Public size as Int32 = br.ReadInt32
         Public types As Byte = br.ReadByte ' No : 0 , 1 : Gzip
         Public unknow0 as Byte = br.ReadByte
         Public unknow1 as Byte = br.ReadByte
@@ -169,11 +174,11 @@ Module Program
     End Class
 
     Class FileDataVer3
-        Public checksum as Byte() = br.ReadBytes(8) 'Int64 = br.ReadInt64
+        Public checksum As Byte() = br.ReadBytes(8) 'Int64 = br.ReadInt64
         Public offset as Int32 = br.ReadInt32
+        Public size As Int32 = br.ReadInt32
         Public sizeUncompressed As Int32 = br.ReadInt32
-        Public size as Int32 = br.ReadInt32
-        Public types As Byte = br.ReadByte ' No : 0 , 1 : Gzip
+        Public types As Byte = br.ReadByte ' No : 0 , 3 : zstd
         Public unknow0 as Byte = br.ReadByte
         Public unknow1 as Byte = br.ReadByte
         Public unknow2 as Byte = br.ReadByte
