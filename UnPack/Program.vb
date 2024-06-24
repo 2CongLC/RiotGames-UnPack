@@ -1,4 +1,4 @@
-Imports System
+﻿Imports System
 Imports System.Text
 Imports System.IO
 Imports System.IO.Compression
@@ -36,22 +36,22 @@ Module Program
             Dim subfiles3 As List(Of FileDataVer3) = Nothing
 
             If MajorVersion = 1 Then
-                Dim entryHeaderOffset as Int16 = br.ReadInt16
-                Dim entryHeaderCellSize as Int16 = br.ReadInt16
+                Dim entryHeaderOffset As Int16 = br.ReadInt16
+                Dim entryHeaderCellSize As Int16 = br.ReadInt16
                 count = br.ReadInt32
                 subfiles1 = New List(Of FileDataVer1)()
             ElseIf MajorVersion = 2 Then
-                Dim ECDSALength as Byte = br.ReadByte
-                Dim ECDSA as Byte() = br.ReadBytes(ECDSALength)
-                Dim ECDSAPadding as Byte() = br.ReadBytes(83 - ECDSALength)
-                Dim filesChecksum as Int64 = br.ReadInt64
-                Dim entryHeaderOffset as Int16 = br.ReadInt16
-                Dim entryHeaderCellSize as Int16 = br.ReadInt16
+                Dim ECDSALength As Byte = br.ReadByte
+                Dim ECDSA As Byte() = br.ReadBytes(ECDSALength)
+                Dim ECDSAPadding As Byte() = br.ReadBytes(83 - ECDSALength)
+                Dim filesChecksum As Int64 = br.ReadInt64
+                Dim entryHeaderOffset As Int16 = br.ReadInt16
+                Dim entryHeaderCellSize As Int16 = br.ReadInt16
                 count = br.ReadInt32
                 subfiles2 = New List(Of FileDataVer2)()
             ElseIf MajorVersion = 3 Then
-                Dim ECDSA as Byte() = br.ReadBytes(256)
-                Dim filesChecksum as Int64 = br.ReadInt64
+                Dim ECDSA As Byte() = br.ReadBytes(256)
+                Dim filesChecksum As Int64 = br.ReadInt64
                 count = br.ReadInt32
                 subfiles3 = New List(Of FileDataVer3)()
             End If
@@ -144,16 +144,17 @@ Module Program
                             End Using
                             fs.Close()
                         End If
+
                     Next
 
                 End If
 
             End While
 
-            br.Close()
             Console.WriteLine("UnPack Done !")
         End If
 
+        br.Close()
         Console.ReadLine()
     End Sub
 
@@ -166,19 +167,20 @@ Module Program
         Return sb.ToString()
     End Function
 
+    ' Cấu trúc dữ liệu block
     Class FileDataVer1
         Public checksum As Byte() = br.ReadBytes(8) ' Int64 = br.ReadInt64
         Public offset As Int32 = br.ReadInt32
-        Public size As Int32 = br.ReadInt32
         Public sizeUncompressed As Int32 = br.ReadInt32
+        Public size As Int32 = br.ReadInt32
         Public types As Int32 = br.ReadInt32 ' No : 0 , 1 : Gzip
     End Class
 
     Class FileDataVer2
         Public checksum As Byte() = br.ReadBytes(8) 'Int64 = br.ReadInt64
         Public offset As Int32 = br.ReadInt32
-        Public size As Int32 = br.ReadInt32
         Public sizeUncompressed As Int32 = br.ReadInt32
+        Public size As Int32 = br.ReadInt32
         Public types As Byte = br.ReadByte ' No : 0 , 1 : Gzip
         Public unknow0 as Byte = br.ReadByte
         Public unknow1 as Byte = br.ReadByte
@@ -188,9 +190,9 @@ Module Program
 
     Class FileDataVer3
         Public checksum As Byte() = br.ReadBytes(8) 'Int64 = br.ReadInt64
-        Public offset as Int32 = br.ReadInt32
-        Public size As Int32 = br.ReadInt32
+        Public offset As Int32 = br.ReadInt32
         Public sizeUncompressed As Int32 = br.ReadInt32
+        Public size As Int32 = br.ReadInt32
         Public types As Byte = br.ReadByte ' No : 0 , 3 : zstd
         Public unknow0 as Byte = br.ReadByte
         Public unknow1 as Byte = br.ReadByte
