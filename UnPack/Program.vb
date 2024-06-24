@@ -92,6 +92,7 @@ Module Program
                             Using dfs As New GZipStream(New MemoryStream(buffer), CompressionMode.Decompress)
                                 dfs.CopyTo(fs)
                             End Using
+                            fs.Close()
                         End If
                     Next
                 ElseIf MajorVersion = 2 Then
@@ -112,6 +113,7 @@ Module Program
                             Using dfs As New GZipStream(New MemoryStream(buffer), CompressionMode.Decompress)
                                 dfs.CopyTo(fs)
                             End Using
+                            fs.Close()
                         End If
                     Next
                 ElseIf MajorVersion = 3 Then
@@ -131,14 +133,16 @@ Module Program
                             Using zs As New ZstdNet.DecompressionStream(New MemoryStream(buffer))
                                 zs.CopyTo(fs)
                             End Using
+                            fs.Close()
                         End If
-
-
                     Next
+
                 End If
 
             End While
 
+            br.Close()
+            Console.WriteLine("UnPack Done !")
         End If
 
         Console.ReadLine()

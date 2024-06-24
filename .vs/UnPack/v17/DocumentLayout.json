@@ -14,12 +14,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -28,7 +24,7 @@
               "RelativeDocumentMoniker": "UnPack\\Program.vb",
               "ToolTip": "D:\\Source VBNet_C#\\GitHub\\RiotGames-UnPack\\UnPack\\Program.vb",
               "RelativeToolTip": "UnPack\\Program.vb",
-              "ViewState": "AQIAAGoAAAAAAAAAAAAgwIcAAAAAAAAA",
+              "ViewState": "AQIAAE8AAAAAAAAAAAAgwGMAAAA0AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003361|",
               "WhenOpened": "2024-06-23T04:34:39.879Z",
               "EditorCaption": ""

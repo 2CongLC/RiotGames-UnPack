@@ -28,7 +28,7 @@ D:\Source VBNet_C#\GitHub\RiotGames-UnPack\UnPack\obj\Debug\net8.0\refint\UnPack
 D:\Source VBNet_C#\GitHub\RiotGames-UnPack\UnPack\obj\Debug\net8.0\UnPack.pdb
 D:\Source VBNet_C#\GitHub\RiotGames-UnPack\UnPack\obj\Debug\net8.0\UnPack.genruntimeconfig.cache
 D:\Source VBNet_C#\GitHub\RiotGames-UnPack\UnPack\obj\Debug\net8.0\ref\UnPack.dll
-D:\Source VBNet_C#\GitHub\RiotGames-UnPack\UnPack\bin\Debug\net8.0\ZstdNet.dll
-D:\Source VBNet_C#\GitHub\RiotGames-UnPack\UnPack\bin\Debug\net8.0\ZstdNet.pdb
 D:\Source VBNet_C#\GitHub\RiotGames-UnPack\UnPack\obj\Debug\net8.0\UnPack.vbproj.AssemblyReference.cache
 D:\Source VBNet_C#\GitHub\RiotGames-UnPack\UnPack\obj\Debug\net8.0\UnPack.vbproj.Up2Date
+D:\Source VBNet_C#\GitHub\RiotGames-UnPack\UnPack\bin\Debug\net8.0\ZstdNet.dll
+D:\Source VBNet_C#\GitHub\RiotGames-UnPack\UnPack\bin\Debug\net8.0\ZstdNet.pdb
