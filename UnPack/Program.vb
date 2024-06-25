@@ -28,7 +28,9 @@ Module Program
 
         If File.Exists(source) Then
 
+            des = Path.GetDirectoryName(source) & "\" & Path.GetFileNameWithoutExtension(source) & "\"
             br = New BinaryReader(File.OpenRead(source))
+
             Dim sign As String = New String(br.ReadChars(2))
             MajorVersion = br.ReadByte
             MinorVersion = br.ReadByte
@@ -67,7 +69,7 @@ Module Program
                 End If
             Next
 
-            des = Path.GetDirectoryName(source) & "\" & Path.GetFileNameWithoutExtension(source)
+
             Directory.CreateDirectory(des)
 
 
@@ -83,14 +85,14 @@ Module Program
 
                         If fd1.types = 0 Then
                             buffer = br.ReadBytes(fd1.size)
-                            Using bw As New BinaryWriter(File.Create(des + "\" + name))
-                                bw.Write(buffer)
-                            End Using
-                        ElseIf fd1.types = 1 Then
+                        Using bw As New BinaryWriter(File.Create(des + name))
+                            bw.Write(buffer)
+                        End Using
+                    ElseIf fd1.types = 1 Then
                             ms = New MemoryStream()
                             buffer = br.ReadBytes(fd1.sizeUncompressed)
-                            Dim fs As FileStream = File.Create(des + "\" + name)
-                            Using dfs As New GZipStream(New MemoryStream(buffer), CompressionMode.Decompress)
+                        Dim fs As FileStream = File.Create(des + name)
+                        Using dfs As New GZipStream(New MemoryStream(buffer), CompressionMode.Decompress)
                                 dfs.CopyTo(fs)
                             End Using
                             fs.Close()
@@ -106,50 +108,74 @@ Module Program
 
                         If fd2.types = 0 Then
                             buffer = br.ReadBytes(fd2.size)
-                            Using bw As New BinaryWriter(File.Create(des + "\" + name))
-                                bw.Write(buffer)
-                            End Using
-                        ElseIf fd2.types = 1 Then
+                        Using bw As New BinaryWriter(File.Create(des + name))
+                            bw.Write(buffer)
+                        End Using
+                    ElseIf fd2.types = 1 Then
                             ms = New MemoryStream()
                             buffer = br.ReadBytes(fd2.sizeUncompressed)
-                            Dim fs As FileStream = File.Create(des + "\" + name)
-                            Using dfs As New GZipStream(New MemoryStream(buffer), CompressionMode.Decompress)
+                        Dim fs As FileStream = File.Create(des + name)
+                        Using dfs As New GZipStream(New MemoryStream(buffer), CompressionMode.Decompress)
                                 dfs.CopyTo(fs)
                             End Using
                             fs.Close()
                         End If
                     Next
                 ElseIf MajorVersion = 3 Then
-                    For Each fd3 As FileDataVer3 In subfiles3
+                For Each fd3 As FileDataVer3 In subfiles3
 
-                        name = hexname(fd3.checksum)
-                        Console.WriteLine("File Offset : {0} - File sizeUncompressed : {1} - File Size : {2} - File Type : {3} - File Name : {4}", fd3.offset, fd3.sizeUncompressed, fd3.size, fd3.types, name)
+                    name = hexname(fd3.checksum)
+                    Console.WriteLine("File Offset : {0} - File sizeUncompressed : {1} - File Size : {2} - File Type : {3} - File Name : {4}", fd3.offset, fd3.sizeUncompressed, fd3.size, fd3.types, name)
 
-                        br.BaseStream.Position = fd3.offset
+                    br.BaseStream.Position = fd3.offset
 
-                        If fd3.types = 0 Then
-                            buffer = br.ReadBytes(fd3.size)
-                            Using bw As New BinaryWriter(File.Create(des + "\" + name))
-                                bw.Write(buffer)
-                            End Using
-                        ElseIf fd3.types = 3 Then
+                    If fd3.types = 0 Then
+                        buffer = br.ReadBytes(fd3.size)
+                        Using bw As New BinaryWriter(File.Create(des + name))
+                            bw.Write(buffer)
+                        End Using
+                    ElseIf fd3.types = 3 Then
 
-                            buffer = br.ReadBytes(fd3.sizeUncompressed)
-                            ms = New MemoryStream(buffer)
-                            ms.Position = 0
-                            Dim fs As FileStream = File.Create(des + "\" + name)
-                            Using zs As New ZstdNet.DecompressionStream(ms)
-                                zs.CopyTo(fs)
-                            End Using
-                            fs.Close()
+                        buffer = br.ReadBytes(fd3.sizeUncompressed)
+                        ms = New MemoryStream(buffer)
+                        ms.Position = 0
+                        Dim fs As FileStream = File.Create(des + name)
+                        Using zs As New ZstdNet.DecompressionStream(ms)
+                            zs.CopyTo(fs)
+                        End Using
+                        fs.Close()
+
+
+                        ' Tìm định dạng tệp tin
+                        Dim br1 As New BinaryReader(File.OpenRead(des + name))
+                        Dim magic As Byte() = br1.ReadBytes(4)
+                        br1.Close()
+
+                        If magic(0) = &HFF And magic(1) = &HD8 Then
+                            File.Move(des + name, des + name + ".jpg")
+                        ElseIf magic(0) = &H1A And magic(1) = &H45 And magic(2) = &HDF And magic(3) = &HA3 Then
+                            File.Move(des + name, des + name + ".wbem")
+                        ElseIf magic(0) = &H0 And magic(1) = &H1 And magic(2) = &H0 And magic(3) = &H0 Then
+                            File.Move(des + name, des + name + ".ttf")
+                        ElseIf magic(0) = &H44 And magic(1) = &H44 And magic(2) = &H53 Then
+                            File.Move(des + name, des + name + ".dds")
+                        Else
+
+
+                            File.Move(des + name, des + name + ".unknow")
+
                         End If
 
-                    Next
-
-                End If
 
 
+                    End If
 
+                Next
+
+            End If
+
+
+            br.Close()
             Console.WriteLine("UnPack Done !")
         End If
 
