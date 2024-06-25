@@ -10,6 +10,9 @@ Module Program
     Private des As String
     Private source As String
     Private buffer As Byte()
+    Private subfiles1 As List(Of FileDataVer1)
+    Private subfiles2 As List(Of FileDataVer2)
+    Private subfiles3 As List(Of FileDataVer3)
 
     Private ms As MemoryStream
     Private MajorVersion As Byte
@@ -30,10 +33,6 @@ Module Program
             MajorVersion = br.ReadByte
             MinorVersion = br.ReadByte
             Dim count As Int32
-
-            Dim subfiles1 As List(Of FileDataVer1) = Nothing
-            Dim subfiles2 As List(Of FileDataVer2) = Nothing
-            Dim subfiles3 As List(Of FileDataVer3) = Nothing
 
             If MajorVersion = 1 Then
                 Dim entryHeaderOffset As Int16 = br.ReadInt16
@@ -56,7 +55,7 @@ Module Program
                 subfiles3 = New List(Of FileDataVer3)()
             End If
 
-            Console.WriteLine("Sign : {0} - MajorVersion : {1} - MinorVersion : {2} - Count : {3}", sign, MajorVersion, MinorVersion, count)
+            Console.Title = "Sign : " & sign & " | MajorVersion : " & MajorVersion & " | MinorVersion : " & MinorVersion & " | Count : " & count
 
             For i As Int32 = 0 To count - 1
                 If MajorVersion = 1 Then
@@ -71,8 +70,8 @@ Module Program
             des = Path.GetDirectoryName(source) & "\" & Path.GetFileNameWithoutExtension(source)
             Directory.CreateDirectory(des)
 
-            While br.BaseStream.Position < br.BaseStream.Length
-                Dim name As String = Nothing
+
+            Dim name As String = Nothing
 
                 If MajorVersion = 1 Then
                     For Each fd1 As FileDataVer1 In subfiles1
@@ -149,7 +148,7 @@ Module Program
 
                 End If
 
-            End While
+
 
             Console.WriteLine("UnPack Done !")
         End If
